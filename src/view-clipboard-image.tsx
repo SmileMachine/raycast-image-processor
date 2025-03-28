@@ -9,6 +9,7 @@ import {
   Grid,
   openCommandPreferences,
   LocalStorage,
+  showInFinder,
 } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import fs from "fs/promises";
@@ -27,16 +28,16 @@ async function pasteCompressedImage(
   options: {
     quality?: number;
     extension?: "jpeg" | "png";
-    recompress?: boolean;
+    compressOnly?: boolean;
   },
 ) {
   try {
-    const { quality = 80, extension = "jpeg", recompress = false } = options;
+    const { quality = 80, extension = "jpeg", compressOnly: compressOnly = false } = options;
     console.log(inputPath);
     const inputSize = await fs.stat(inputPath);
     const outputPath = getOutputPath(inputPath, { quality, extension });
     console.log(outputPath);
-    if (!existsSync(outputPath) || recompress) {
+    if (!existsSync(outputPath) || compressOnly) {
       console.log(outputPath);
       const image = await Jimp.read(inputPath);
       await image.write(outputPath, { quality: quality });
@@ -44,7 +45,9 @@ async function pasteCompressedImage(
     } else {
       console.log("Old Buffer");
     }
-    await Clipboard.paste({ file: outputPath });
+    if (!compressOnly) {
+      await Clipboard.paste({ file: outputPath });
+    }
 
     const outputSize = await fs.stat(outputPath);
     const ratio = (inputSize.size / outputSize.size) * 100;
@@ -57,7 +60,6 @@ async function pasteCompressedImage(
     console.error("Failed:", err);
   }
 }
-
 
 function ActionList({
   image,
@@ -79,6 +81,19 @@ function ActionList({
           push(<ImageDetail image={image} />);
         }}
       />
+      <Action.ShowInFinder path={image.path} />
+      <Action
+        title="Show Compressed in Finder"
+        icon={Icon.Image}
+        onAction={() => {
+          const compressedPath = getOutputPath(image.path, { quality: 80, extension: "jpeg" });
+          if (existsSync(compressedPath)) {
+            showInFinder(compressedPath);
+          } else {
+            showHUD("Image is not compressed");
+          }
+        }}
+      />
       <Action
         title={currentView === "grid" ? "List View" : "Grid View"}
         shortcut={{ modifiers: ["cmd"], key: currentView === "grid" ? "l" : "g" }}
@@ -88,12 +103,12 @@ function ActionList({
         }}
       />
       <Action.ToggleQuickLook />
-      <Action title="Open Extension Preferences" icon={Icon.Gear} onAction={openCommandPreferences} />
       <Action
-        title="Recompress"
+        title="Compress"
         icon={Icon.Box}
-        onAction={() => pasteCompressedImage(image.path, { recompress: true })}
+        onAction={() => pasteCompressedImage(image.path, { compressOnly: true })}
       />
+      <Action title="Open Extension Preferences" icon={Icon.Gear} onAction={openCommandPreferences} />
     </ActionPanel>
   );
 }

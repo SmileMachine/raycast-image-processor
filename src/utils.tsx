@@ -3,8 +3,6 @@ import ExifReader from "exifreader";
 import fs from "fs/promises";
 import os from "os";
 
-const tmpDir = os.tmpdir();
-
 export type ImageInfo = {
   name: string;
   path: string;
@@ -17,6 +15,8 @@ export function getOutputPath(
   options: { quality: number; extension: "jpeg" | "png" },
 ): `${string}.${typeof extension}` {
   const { quality, extension } = options;
+  const tmpDir = os.tmpdir() + "/image-processor";
+  fs.mkdir(tmpDir, { recursive: true });
   return `${tmpDir}/${basename(file)}-${quality}.${extension}`;
 }
 
