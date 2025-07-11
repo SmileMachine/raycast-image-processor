@@ -23,6 +23,10 @@ import { ImageDetail } from "./image-detail";
 
 const clipboardPath = os.homedir() + "/Library/Caches/com.raycast.macos/Clipboard";
 
+async function pasteImage(inputPath: string) {
+  await Clipboard.paste({ file: inputPath });
+}
+
 async function pasteCompressedImage(
   inputPath: string,
   options: {
@@ -81,6 +85,7 @@ function ActionList({
           push(<ImageDetail image={image} />);
         }}
       />
+      <Action title="Paste Original" icon={Icon.Image} onAction={() => pasteImage(image.path)} />
       <Action.ShowInFinder path={image.path} />
       <Action
         title="Show Compressed in Finder"

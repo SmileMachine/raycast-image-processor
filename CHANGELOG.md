@@ -18,5 +18,6 @@
   - [ ] Rotate
   - [ ] Configure default action
 - [ ] Add more actions
-  - [ ] Open in finder
+  - [x] Open in finder [2025-03-29]
   - [ ] Copy path
+  - [x] Paste original image [2025-07-12]
