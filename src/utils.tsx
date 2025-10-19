@@ -10,10 +10,12 @@ export type ImageInfo = {
   size: number;
 };
 
+export type SupportedExtension = "jpeg" | "png" | "bmp" | "tiff" | "gif";
+
 export function getOutputPath(
   file: string,
-  options: { quality: number; extension: "jpeg" | "png" },
-): `${string}.${typeof extension}` {
+  options: { quality: number; extension: SupportedExtension },
+): `${string}.${SupportedExtension}` {
   const { quality, extension } = options;
   const tmpDir = os.tmpdir() + "/image-processor";
   fs.mkdir(tmpDir, { recursive: true });

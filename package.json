@@ -34,6 +34,44 @@
               "value": "list"
             }
           ]
+        },
+        {
+          "name": "save-extension",
+          "title": "Save Extension",
+          "description": "The format to save the image in",
+          "type": "dropdown",
+          "default": "jpg",
+          "required": false,
+          "data": [
+            {
+              "title": "JPEG",
+              "value": "jpeg"
+            },
+            {
+              "title": "PNG",
+              "value": "png"
+            },
+            {
+              "title": "BMP",
+              "value": "bmp"
+            },
+            {
+              "title": "TIFF",
+              "value": "tiff"
+            },
+            {
+              "title": "GIF",
+              "value": "gif"
+            }
+          ]
+        },
+        {
+          "name": "save-quality",
+          "title": "Save Quality",
+          "description": "The quality to save the image in (0-100)",
+          "type": "textfield",
+          "default": "80",
+          "required": false
         }
       ]
     }

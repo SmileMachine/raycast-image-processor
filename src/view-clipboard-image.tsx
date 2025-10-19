@@ -10,6 +10,7 @@ import {
   openCommandPreferences,
   LocalStorage,
   showInFinder,
+  getPreferenceValues,
 } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import fs from "fs/promises";
@@ -18,7 +19,7 @@ import dayjs from "dayjs";
 import { Jimp } from "jimp";
 import { existsSync } from "fs";
 import { useState } from "react";
-import { getOutputPath, formatBytes, ImageInfo, getImageInfo } from "./utils";
+import { getOutputPath, formatBytes, ImageInfo, getImageInfo, SupportedExtension } from "./utils";
 import { ImageDetail } from "./image-detail";
 
 const clipboardPath = os.homedir() + "/Library/Caches/com.raycast.macos/Clipboard";
@@ -30,13 +31,21 @@ async function pasteImage(inputPath: string) {
 async function pasteCompressedImage(
   inputPath: string,
   options: {
-    quality?: number;
-    extension?: "jpeg" | "png";
     compressOnly?: boolean;
   },
 ) {
   try {
-    const { quality = 80, extension = "jpeg", compressOnly: compressOnly = false } = options;
+    const preferences = await getPreferenceValues();
+    const qualityString = preferences["save-quality"] as string;
+    if (!qualityString.match(/^1?[0-9]{1,2}$/)) {
+      showHUD("Please use a valid quality (0-100), current value: " + qualityString);
+      return;
+    }
+    const quality = parseInt(qualityString);
+    const extension = preferences["save-extension"] as SupportedExtension;
+    console.log("quality: " + quality, "extension: " + extension);
+    console.log(preferences)
+    const { compressOnly: compressOnly = false } = options;
     console.log(inputPath);
     const inputSize = await fs.stat(inputPath);
     const outputPath = getOutputPath(inputPath, { quality, extension });
