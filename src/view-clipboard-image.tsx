@@ -44,7 +44,7 @@ async function pasteCompressedImage(
     const quality = parseInt(qualityString);
     const extension = preferences["save-extension"] as SupportedExtension;
     console.log("quality: " + quality, "extension: " + extension);
-    console.log(preferences)
+    console.log(preferences);
     const { compressOnly: compressOnly = false } = options;
     console.log(inputPath);
     const inputSize = await fs.stat(inputPath);
